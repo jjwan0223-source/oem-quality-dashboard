@@ -13,6 +13,10 @@
   
   <script id="externalDataScript" src="current_data.js" charset="utf-8"></script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+    body {
+      font-family: 'Inter', 'Noto Sans KR', sans-serif;
+    }
     .sidebar-active {
       background-color: #eff6ff;
       border-color: #3b82f6;
@@ -39,7 +43,7 @@
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col font-sans select-text">
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col select-text">
 
   <!-- ================= 로그인 인증 게이트 ================= -->
   <div id="loginScreen" class="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center p-4">
@@ -133,93 +137,83 @@
       
       <!-- 좌측 사이드바 -->
       <aside class="w-full md:w-72 flex-shrink-0 space-y-4">
+        
+        <!-- [요구사항 2] 업체별 세부 모니터링: 세로 구조 고정 & 불필요 지표 삭제 -->
         <div id="leftMonitorCard" class="hidden bg-gradient-to-br from-slate-900 to-blue-950 text-white p-4 rounded-xl shadow-md space-y-3">
           <div class="flex items-center justify-between border-b border-white/10 pb-2">
             <span class="text-xs font-bold text-blue-300 flex items-center">
               <i class="fa-solid fa-eye mr-1.5"></i> 업체별 세부 모니터링
             </span>
-            <button onclick="selectTeam('ALL')" class="text-[10px] bg-white/10 hover:bg-white/20 text-white px-2 py-0.5 rounded transition">
-              전체 현황 보기
-            </button>
           </div>
           <div>
-            <div id="leftMonitorTeamName" class="text-base font-black tracking-tight truncate">-</div>
-            <p class="text-[11px] text-slate-300 mt-0.5">선택 업체 실시간 핵심 품질 지표</p>
+            <div id="leftMonitorTeamName" class="text-base font-black tracking-tight truncate text-amber-400">-</div>
           </div>
-          <div class="grid grid-cols-2 gap-2 text-xs pt-1">
-            <div class="bg-white/10 rounded-lg p-2">
+          <div class="space-y-2 text-xs">
+            <div class="bg-white/10 rounded-lg p-2.5">
               <span class="text-[10px] text-slate-300 block">최다 불만 제품</span>
-              <span id="leftMonitorTopProd" class="font-bold text-amber-300 truncate block mt-0.5">-</span>
+              <span id="leftMonitorTopProd" class="font-bold text-white truncate block mt-0.5">-</span>
             </div>
-            <div class="bg-white/10 rounded-lg p-2">
+            <div class="bg-white/10 rounded-lg p-2.5">
               <span class="text-[10px] text-slate-300 block">최다 발생 유형(소)</span>
               <span id="leftMonitorTopType" class="font-bold text-rose-300 truncate block mt-0.5">-</span>
             </div>
           </div>
-          <div class="bg-white/10 rounded-lg p-2 text-xs">
-            <div class="flex justify-between text-[11px] mb-1">
-              <span class="text-slate-300">3대 유형 분포:</span>
-              <span id="leftMonitorTypeRatio" class="font-semibold text-white">포장 0 / 내용물 0 / 이물 0</span>
-            </div>
-            <div class="text-[10px] text-slate-300 truncate" id="leftMonitorKeywords">주요 유형: -</div>
-          </div>
         </div>
 
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-3">
-          <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-            <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">생산팀(OEM사)별 모니터링</span>
+        <!-- [요구사항 3] 생산팀별 모니터링 및 3대 불만 유형 도넛 그래프 내장 -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 space-y-4">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">생산팀별 모니터링</span>
             <div class="flex items-center space-x-1.5">
               <span id="sidebarCount" class="text-xs font-semibold text-blue-600">총 0개사</span>
-              <button onclick="selectTeam('ALL')" id="btnShowAllTeams" class="hidden text-[10px] bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded font-bold hover:bg-blue-100">전체보기</button>
+              <!-- [요구사항 8] 전체보기 버튼 단일화 -->
+              <button onclick="selectTeam('ALL')" id="btnShowAllTeams" class="text-[10px] bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded font-bold hover:bg-blue-100 transition">전체보기</button>
             </div>
           </div>
-          <input type="text" id="teamSearchInput" oninput="renderSidebar(currentDataset)" placeholder="생산팀명 빠른 검색..." class="w-full mb-2 px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg outline-none focus:border-blue-500" />
-          <div id="teamList" class="space-y-1 max-h-[480px] overflow-y-auto pr-1">
+          <input type="text" id="teamSearchInput" oninput="renderSidebar(currentDataset)" placeholder="생산팀명 빠른 검색..." class="w-full px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg outline-none focus:border-blue-500" />
+          <div id="teamList" class="space-y-1 max-h-[220px] overflow-y-auto pr-1">
             <!-- 동적 렌더링 -->
+          </div>
+          
+          <!-- [요구사항 3] 생산팀별 모니터링 아래 도넛 그래프 고정 영역 배치 -->
+          <div class="pt-3 border-t border-slate-100">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">3대 불만 유형 점검</span>
+              <button onclick="clearTypeLFilter()" id="clearDonutFilterBtn" class="hidden text-[10px] text-rose-600 font-bold hover:underline">필터해제</button>
+            </div>
+            <div class="h-36 w-full relative flex items-center justify-center">
+              <canvas id="typeLargeDonutChart" class="cursor-pointer"></canvas>
+            </div>
+            <div id="donutSummaryBtns" class="grid grid-cols-3 gap-1 mt-2 text-center text-[10px]">
+              <!-- 도넛 강조 제어 버튼들 -->
+            </div>
           </div>
         </div>
 
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2.5">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-700"><i class="fa-solid fa-database mr-1 text-blue-600"></i> 로컬 DB & 신규표시 관리</span>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <button onclick="exportBackupJson()" class="w-full py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg text-[11px] font-bold transition flex items-center justify-center">
-              <i class="fa-solid fa-download mr-1"></i> 통합 백업
-            </button>
-            <label class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition flex items-center justify-center cursor-pointer">
-              <i class="fa-solid fa-upload mr-1"></i> 백업 복원
-              <input type="file" accept=".json" class="hidden" onchange="importBackupJson(this)" />
-            </label>
-          </div>
-          <div class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100">
-            <button onclick="clearNewBadges()" class="w-full py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-lg text-[11px] font-bold transition flex items-center justify-center" title="신규 +N 표시 및 노란 음영 초기화">
-              <i class="fa-solid fa-check-double mr-1"></i> 신규표시 확인완료
-            </button>
-            <button onclick="resetToInitial()" class="w-full py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[11px] font-medium transition flex items-center justify-center">
-              <i class="fa-solid fa-trash-can mr-1"></i> DB 초기화
-            </button>
-          </div>
+        <!-- [요구사항 6] 로컬 DB&신규표시 관리에서 신규 확인 버튼만 남기고 모두 삭제 -->
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2">
+          <span class="text-xs font-bold text-slate-700 block"><i class="fa-solid fa-circle-check text-blue-600 mr-1.5"></i> 품질 분석 완료 대기</span>
+          <button onclick="clearNewBadges()" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow-sm transition flex items-center justify-center">
+            <i class="fa-solid fa-check-double mr-1.5"></i> 신규 등록 건 확인완료
+          </button>
         </div>
       </aside>
 
       <!-- 우측 메인 영역 -->
       <main class="flex-1 space-y-6 min-w-0">
+        
+        <!-- 상단 필터 및 핵심 지표 -->
         <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4">
           <div class="space-y-3 flex-1 w-full">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <span id="currentViewBadge" class="inline-block px-2.5 py-0.5 text-xs font-bold bg-blue-100 text-blue-800 rounded-md mb-1">전체 협력사 통합 관제</span>
-                <h2 id="currentViewTitle" class="text-xl font-bold text-slate-900">전체 생산팀 불만 발생 현황</h2>
-              </div>
-              <button id="btnReturnAllMain" onclick="selectTeam('ALL')" class="hidden px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition flex items-center shadow-sm">
-                <i class="fa-solid fa-arrow-left mr-1.5"></i> 전체 생산팀 현황으로 돌아가기
-              </button>
+            <div>
+              <span id="currentViewBadge" class="inline-block px-2.5 py-0.5 text-xs font-bold bg-blue-100 text-blue-800 rounded-md mb-1">전체 협력사 통합 관제</span>
+              <h2 id="currentViewTitle" class="text-xl font-bold text-slate-900 tracking-tight">전체 생산팀 불만 발생 현황</h2>
             </div>
 
+            <!-- 제조년, 접수년 필터 -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
               <div class="flex flex-wrap items-center gap-2 bg-slate-50 px-3 py-2 rounded-lg border border-slate-200">
-                <span class="text-xs font-bold text-slate-700 mr-2"><i class="fa-solid fa-industry text-blue-600 mr-1"></i>제조년 (중복선택):</span>
+                <span class="text-xs font-bold text-slate-700 mr-2"><i class="fa-solid fa-industry text-blue-600 mr-1"></i>제조년:</span>
                 <div id="mfgYearCheckboxContainer" class="flex items-center gap-4 text-xs font-semibold">
                   <label class="inline-flex items-center space-x-1 cursor-pointer">
                     <input type="checkbox" value="2025" checked onchange="onYearFilterChange()" class="mfg-year-chk rounded text-blue-600 focus:ring-blue-500" />
@@ -233,7 +227,7 @@
               </div>
               
               <div class="flex flex-wrap items-center gap-2 bg-slate-50 px-3 py-2 rounded-lg border border-slate-200">
-                <span class="text-xs font-bold text-slate-700 mr-2"><i class="fa-solid fa-calendar-check text-blue-600 mr-1"></i>접수년 (중복선택):</span>
+                <span class="text-xs font-bold text-slate-700 mr-2"><i class="fa-solid fa-calendar-check text-blue-600 mr-1"></i>접수년:</span>
                 <div id="receiptYearCheckboxContainer" class="flex items-center gap-4 text-xs font-semibold">
                   <label class="inline-flex items-center space-x-1 cursor-pointer">
                     <input type="checkbox" value="2025" checked onchange="onYearFilterChange()" class="receipt-year-chk rounded text-blue-600 focus:ring-blue-500" />
@@ -246,14 +240,9 @@
                 </div>
               </div>
             </div>
-            
-            <div class="flex justify-end">
-              <button onclick="resetFilters()" class="text-xs font-bold text-rose-600 hover:underline flex items-center">
-                <i class="fa-solid fa-rotate-left mr-1"></i>전체 필터 초기화
-              </button>
-            </div>
           </div>
 
+          <!-- 지표 박스 -->
           <div class="flex items-center gap-5 border-t xl:border-t-0 pt-3 xl:pt-0 border-slate-100 w-full xl:w-auto justify-end flex-shrink-0">
             <div class="text-right">
               <span class="text-xs font-semibold text-slate-400">총 VOC 접수</span>
@@ -270,18 +259,18 @@
           </div>
         </div>
 
+        <!-- [전체 현황 모드] 막대그래프 4종 -->
         <div id="allViewSection" class="space-y-6">
           <div class="space-y-3">
             <div class="flex items-center justify-between border-b border-slate-200 pb-2">
               <div class="flex items-center space-x-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
-                <h3 class="text-sm font-bold text-slate-800">접수일 기준 불만 발생 모니터링 (2025년 vs 2026년 막대그래프)</h3>
+                <h3 class="text-sm font-bold text-slate-800">접수일 기준 불만 발생 모니터링 (2025년 vs 2026년)</h3>
               </div>
-              <span class="text-[11px] text-slate-500">※ 좌측에서 개별 생산팀 클릭 시 해당 업체의 도넛 차트 및 피벗테이블이 표시됩니다.</span>
             </div>
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
               <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
-                <h4 class="text-xs sm:text-sm font-bold text-slate-800 mb-2">1. [접수일 기준] 전체(고객 불만) 발생 건수</h4>
+                <h4 class="text-xs sm:text-sm font-bold text-slate-800 mb-2">1. [접수일 기준] 전체 발생 건수</h4>
                 <div class="chart-scroll-container overflow-x-auto overflow-y-hidden border border-slate-100 rounded-lg p-1 flex-1">
                   <div id="wrapperReceiptTotal" class="h-60 min-w-[580px]">
                     <canvas id="receiptTotalChart"></canvas>
@@ -302,11 +291,11 @@
           <div class="space-y-3">
             <div class="flex items-center space-x-2 border-b border-slate-200 pb-2">
               <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-              <h3 class="text-sm font-bold text-slate-800">제조일 기준 불만 발생 모니터링 (2025년 vs 2026년 막대그래프)</h3>
+              <h3 class="text-sm font-bold text-slate-800">제조일 기준 불만 발생 모니터링 (2025년 vs 2026년)</h3>
             </div>
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
               <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
-                <h4 class="text-xs sm:text-sm font-bold text-slate-800 mb-2">3. [제조일 기준] 전체(고객 불만) 발생 건수</h4>
+                <h4 class="text-xs sm:text-sm font-bold text-slate-800 mb-2">3. [제조일 기준] 전체 발생 건수</h4>
                 <div class="chart-scroll-container overflow-x-auto overflow-y-hidden border border-slate-100 rounded-lg p-1 flex-1">
                   <div id="wrapperMfgTotal" class="h-60 min-w-[580px]">
                     <canvas id="mfgTotalChart"></canvas>
@@ -325,41 +314,20 @@
           </div>
         </div>
 
-        <div id="teamDetailSection" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div class="lg:col-span-1 bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between mb-2">
-                <h4 class="text-sm font-bold text-slate-900 flex items-center">
-                  <i class="fa-solid fa-chart-pie text-blue-600 mr-1.5"></i> 3대 불만 유형 도넛 그래프
-                </h4>
-                <div id="selectedTypeLBadgeContainer" class="hidden flex items-center space-x-1">
-                  <span id="selectedTypeLBadge" class="px-2 py-0.5 bg-blue-600 text-white rounded-full text-[10px] font-bold"></span>
-                  <button onclick="clearTypeLFilter()" class="text-[11px] text-rose-600 hover:underline font-bold">해제</button>
-                </div>
-              </div>
-              <p class="text-xs text-slate-500 mb-3">도넛 조각(내용물이상/이물혼입/포장불량)을 클릭하면 우측 피벗과 아래 상세 내역이 연동됩니다.</p>
-            </div>
-            <div class="h-56 w-full relative flex items-center justify-center">
-              <canvas id="typeLargeDonutChart" class="cursor-pointer"></canvas>
-            </div>
-            <div id="donutSummaryBtns" class="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-100 text-center text-xs">
-              <!-- 유형별 클릭 버튼 동적 생성 -->
-            </div>
-          </div>
-
-          <div id="matrixSection" class="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+        <!-- [요구사항 4] 피벗 테이블 세로/가로 변경 완료 (1월 2월 세로로, 상담유형(소)가 가로로) -->
+        <div id="teamDetailSection" class="hidden space-y-6">
+          <div id="matrixSection" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
             <div class="p-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
               <div>
-                <h3 id="matrixTableTitle" class="text-sm font-bold text-slate-900">상담유형(소) × 제조년/제조월 피벗테이블 (2025~2026년 제조분)</h3>
-                <p class="text-xs text-slate-500">
-                  값: 상담번호 개수 | <span class="bg-yellow-200 text-amber-900 font-bold px-1.5 py-0.2 rounded">노란색 음영</span>은 신규 업로드로 추가된 건수가 포함된 항목입니다.
-                </p>
+                <h3 id="matrixTableTitle" class="text-sm font-bold text-slate-900">[정밀 진단] 제조년월 × 상담유형(소) 입체 분석 (2025~2026년 제조분)</h3>
+                <!-- [요구사항 7] 두 줄 이상 문장 가독성 좋은 한 줄 구성 완료 -->
+                <p class="text-xs text-slate-500">값: 불만 건수 | 노란색 음영은 신규 업로드로 추가된 건수이며, 숫자 클릭 시 상세 내용을 확인할 수 있습니다.</p>
               </div>
               <span class="text-xs text-blue-600 font-semibold bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200 flex-shrink-0">
-                <i class="fa-regular fa-hand-pointer mr-1"></i>숫자 클릭 시 정보/사진 등록
+                <i class="fa-regular fa-hand-pointer mr-1"></i>숫자 클릭시 이미지 확인
               </span>
             </div>
-            <div class="overflow-x-auto max-h-[360px] flex-1">
+            <div class="overflow-x-auto max-h-[380px] flex-1">
               <table id="matrixTable" class="min-w-full text-xs text-center border-collapse">
                 <!-- 동적 렌더링 -->
               </table>
@@ -367,6 +335,7 @@
           </div>
         </div>
 
+        <!-- 상세 접수 내역 테이블 -->
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           <div class="p-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div>
@@ -489,7 +458,7 @@
       <div class="bg-blue-50/80 border-b border-blue-100 px-5 py-3 text-xs text-blue-900 flex flex-wrap items-center justify-between gap-2">
         <span class="flex items-center font-medium">
           <i class="fa-solid fa-circle-info mr-1.5 text-blue-600"></i>
-          신규 추가된 데이터는 <strong class="text-amber-700 mx-1">노란색/주황색 구분 테두리</strong>로 표시되며, 첨부한 사진은 브라우저에 영구 보관됩니다.
+          신규 추가된 데이터는 노란색 구분 테두리로 표시됩니다.
         </span>
         <a href="https://otokics.lightning.force.com/lightning/page/home" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-sm flex items-center text-xs transition">
           상세 내용 확인 바로가기 (Salesforce) <i class="fa-solid fa-arrow-up-right-from-square ml-1.5 text-[10px]"></i>
@@ -507,7 +476,7 @@
   </div>
 
   <script>
-    // ================= 1. 보안 인증 시스템 =================
+    // ================= 1. 보안 인증 및 동기화 설정 =================
     const GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbxzuMBZdlQam4iWwHWhEVVA7RorfyKXRiFC1IE17rcE611WUeRmMTjE8LfwPCiOFt3tNA/exec";
     const AUTH_ID = "otokiqi";
     const AUTH_PW = "otk1234!";
@@ -594,7 +563,6 @@
     }
 
     async function loadDatasetPermanently() {
-      // 1. Google Web App API를 통한 구글 스프레드시트 실시간 데이터 조회
       try {
         console.log("구글 스프레드시트에서 데이터를 조회하는 중...");
         const response = await fetch(GOOGLE_API_URL);
@@ -610,7 +578,6 @@
         console.warn("구글 API 호출 실패, 로컬 IndexedDB 캐시를 불러옵니다.", err);
       }
 
-      // 2. 오프라인 또는 API 실패 시 백업용으로 로컬 데이터 사용
       const db = await openDatabase();
       if (db) {
         const stored = await new Promise((resolve) => {
@@ -684,7 +651,7 @@
       return result;
     }
 
-    // ================= 3. 데이터 정제 (결측치 제외 및 2025~2026년 한정) =================
+    // ================= 3. 데이터 정제 =================
     function parseYearMonth(dateVal, explicitYear, explicitMonth) {
       let y = (explicitYear !== undefined && explicitYear !== null) ? String(explicitYear).replace(/\.0$/, '').replace(/[^0-9]/g, '') : '';
       let m = (explicitMonth !== undefined && explicitMonth !== null) ? String(explicitMonth).replace(/\.0$/, '').replace(/[^0-9]/g, '') : '';
@@ -762,7 +729,7 @@
             date: rec.date,
             rYear: rec.year,
             rMonth: rec.month,
-            isNew: Boolean(row.isNew)
+            isNew: Boolean(row['신규여부'] === true || String(row['신규여부']).trim().toUpperCase() === 'TRUE' || row.isNew === true) // 구글 시트 신규여부 연동
           });
         }
       });
@@ -774,7 +741,7 @@
       return `COMP_${d.team}_${d.product}_${d.date}_${d.typeS}_${d.desc.slice(0,20)}`;
     }
 
-    // ================= 4. 상태 변수 및 초기화 =================
+    // ================= 4. 상태 관리 변수 =================
     let currentDataset = [];
     let imageStore = {};
     let currentSelectedTeam = 'ALL';
@@ -853,7 +820,7 @@
       });
     }
 
-    // ================= 5. 좌측 사이드바 (신규 +N 표시) =================
+    // ================= 5. 협력사 목록 렌더링 =================
     function renderSidebar(data) {
       const q = (document.getElementById('teamSearchInput')?.value || '').toLowerCase().trim();
       const teamCounts = {};
@@ -906,45 +873,35 @@
       updateView();
     };
 
+    // [요구사항 2] 업체별 세부 모니터링: 세로 구조 정립 및 분포도 삭제
     function updateLeftMonitorCard(activeData) {
       const card = document.getElementById('leftMonitorCard');
       const btnShowAll = document.getElementById('btnShowAllTeams');
-      const btnReturnAll = document.getElementById('btnReturnAllMain');
 
       if (currentSelectedTeam === 'ALL') {
         card.classList.add('hidden');
         btnShowAll.classList.add('hidden');
-        btnReturnAll.classList.add('hidden');
         return;
       }
 
       card.classList.remove('hidden');
       btnShowAll.classList.remove('hidden');
-      btnReturnAll.classList.remove('hidden');
-      document.getElementById('leftMonitorTeamName').innerText = currentSelectedTeam;
+      document.getElementById('leftMonitorTeamName').innerText = currentSelectedTeam + " 핵심 지표";
 
       const pCounts = {}, tCounts = {};
-      let cPack = 0, cContent = 0, cForeign = 0;
-
       activeData.forEach(d => {
         pCounts[d.product] = (pCounts[d.product] || 0) + 1;
         tCounts[d.typeS] = (tCounts[d.typeS] || 0) + 1;
-        if (d.typeL === '포장불량') cPack++;
-        else if (d.typeL === '내용물이상') cContent++;
-        else if (d.typeL === '이물혼입') cForeign++;
       });
 
       const topP = Object.entries(pCounts).sort((a,b) => b[1] - a[1])[0];
       const topT = Object.entries(tCounts).sort((a,b) => b[1] - a[1])[0];
-      const topKeywords = Object.entries(tCounts).sort((a,b) => b[1] - a[1]).slice(0, 3).map(x => x[0]).join(', ');
 
       document.getElementById('leftMonitorTopProd').innerText = topP ? `${topP[0]} (${topP[1]}건)` : '-';
       document.getElementById('leftMonitorTopType').innerText = topT ? `${topT[0]} (${topT[1]}건)` : '-';
-      document.getElementById('leftMonitorTypeRatio').innerText = `포장 ${cPack} / 내용물 ${cContent} / 이물 ${cForeign}`;
-      document.getElementById('leftMonitorKeywords').innerText = `주요 유형: ${topKeywords || '-'}`;
     }
 
-    // ================= 6. 메인 뷰 업데이트 (전체 vs 개별 업체) =================
+    // ================= 6. 전체 뷰 스위칭 업데이트 =================
     function updateView() {
       const filteredByYear = getFilteredData();
       const teamFilteredData = (currentSelectedTeam === 'ALL')
@@ -967,10 +924,11 @@
 
       const allSec = document.getElementById('allViewSection');
       const teamDetailSec = document.getElementById('teamDetailSection');
-      const typeSuffix = currentSelectedTypeL === 'ALL' ? '' : ` · [${currentSelectedTypeL}]`;
+
+      // 항상 도넛 그래프는 활성화 상태로 두고 상호 연동 수행
+      renderDonutChart(teamFilteredData);
 
       if (currentSelectedTeam === 'ALL') {
-        // 전체 관제에서는 도넛과 피벗테이블 숨김
         document.getElementById('currentViewBadge').innerText = '전체 협력사 통합 관제';
         document.getElementById('currentViewBadge').className = 'inline-block px-2.5 py-0.5 text-xs font-bold bg-blue-100 text-blue-800 rounded-md mb-1';
         document.getElementById('currentViewTitle').innerText = '전체 생산팀 불만 발생 현황';
@@ -980,24 +938,13 @@
 
         renderAllFourCharts(finalActiveData);
       } else {
-        // 개별 업체 선택 시 도넛과 피벗테이블 표시
         document.getElementById('currentViewBadge').innerText = '협력사 전용 정밀 관제';
         document.getElementById('currentViewBadge').className = 'inline-block px-2.5 py-0.5 text-xs font-bold bg-rose-100 text-rose-800 rounded-md mb-1';
-        document.getElementById('currentViewTitle').innerText = `${currentSelectedTeam} 불만 및 클레임 상세 진단${typeSuffix}`;
+        document.getElementById('currentViewTitle').innerText = `${currentSelectedTeam} 불만 및 클레임 상세 진단`;
 
         allSec.classList.add('hidden');
         teamDetailSec.classList.remove('hidden');
 
-        const badgeContainer = document.getElementById('selectedTypeLBadgeContainer');
-        const badge = document.getElementById('selectedTypeLBadge');
-        if (currentSelectedTypeL !== 'ALL') {
-          badgeContainer.classList.remove('hidden');
-          badge.innerText = currentSelectedTypeL;
-        } else {
-          badgeContainer.classList.add('hidden');
-        }
-
-        renderDonutChart(teamFilteredData);
         renderPivotMatrix(finalActiveData);
       }
 
@@ -1007,7 +954,7 @@
       applyTableFiltersAndRender();
     }
 
-    // ================= 7. 접수일/제조일 4대 막대그래프 =================
+    // ================= 7. 차트 시각화 그룹 =================
     function renderAllFourCharts(dataset) {
       ['receiptTotal', 'receiptClaim', 'mfgTotal', 'mfgClaim'].forEach(k => {
         if (chartInstances[k]) {
@@ -1087,7 +1034,7 @@
       });
     }
 
-    // ================= 8. 3대 불만 유형 도넛 차트 =================
+    // [요구사항 3] 도넛 차트 강조 제어: 선택된 부문만 선명히 강조하고 나머지는 흐리게 표시
     function renderDonutChart(teamFilteredData) {
       if (chartInstances.donutLarge) chartInstances.donutLarge.destroy();
 
@@ -1098,7 +1045,13 @@
         if (counts[d.typeL] !== undefined) counts[d.typeL]++;
       });
 
-      const colors = ['#f59e0b', '#ef4444', '#3b82f6'];
+      const baseColors = ['#f59e0b', '#ef4444', '#3b82f6'];
+      const lightColors = ['#fef3c7', '#fee2e2', '#dbeafe']; // 흐려진 형태의 파스텔 컬러
+      
+      const backgroundColors = targetTypes.map((t, idx) => {
+        if (currentSelectedTypeL === 'ALL') return baseColors[idx];
+        return currentSelectedTypeL === t ? baseColors[idx] : lightColors[idx];
+      });
 
       chartInstances.donutLarge = new Chart(document.getElementById('typeLargeDonutChart'), {
         type: 'doughnut',
@@ -1106,13 +1059,16 @@
           labels: targetTypes,
           datasets: [{
             data: targetTypes.map(t => counts[t]),
-            backgroundColor: colors,
-            borderWidth: 2
+            backgroundColor: backgroundColors,
+            borderWidth: 1.5
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
           onClick: (event, elements) => {
             if (elements && elements.length > 0) {
               const clickedLabel = targetTypes[elements[0].index];
@@ -1123,13 +1079,21 @@
         }
       });
 
+      const filterBtn = document.getElementById('clearDonutFilterBtn');
+      if (currentSelectedTypeL !== 'ALL') {
+        filterBtn.classList.remove('hidden');
+      } else {
+        filterBtn.classList.add('hidden');
+      }
+
       const btnContainer = document.getElementById('donutSummaryBtns');
-      btnContainer.innerHTML = targetTypes.map((t) => {
+      btnContainer.innerHTML = targetTypes.map((t, idx) => {
         const isActive = currentSelectedTypeL === t;
+        const colorClass = t === '내용물이상' ? 'text-amber-600' : (t === '이물혼입' ? 'text-rose-600' : 'text-blue-600');
         return `
-          <button onclick="toggleDonutType('${t}')" class="p-2 rounded-lg border transition ${isActive ? 'bg-blue-50 border-blue-500 font-bold text-blue-800' : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'}">
-            <span class="block text-[11px]">${t}</span>
-            <span class="text-sm font-black">${counts[t].toLocaleString()}건</span>
+          <button onclick="toggleDonutType('${t}')" class="p-1 rounded border transition ${isActive ? 'bg-slate-100 border-slate-400 font-bold' : 'bg-white border-slate-100 hover:bg-slate-50'}">
+            <span class="block text-[9px] text-slate-500 font-semibold">${t}</span>
+            <span class="text-xs font-bold ${colorClass}">${counts[t]}건</span>
           </button>
         `;
       }).join('');
@@ -1140,80 +1104,97 @@
       updateView();
     };
 
-    // ================= 9. 피벗 테이블 (신규 건수 노란색 음영 적용) =================
+    // [요구사항 4] 피벗 테이블 세로/가로 행렬 변경 및 가독성 업그레이드
     function renderPivotMatrix(activeData) {
       const table = document.getElementById('matrixTable');
       const pivotSource = activeData.filter(d => d.mfgYear === '2025' || d.mfgYear === '2026');
 
-      const yearColumns = [
-        { year: '2025', months: [1,2,3,4,5,6,7,8,9,10,11,12] },
-        { year: '2026', months: [1,2,3,4,5,6,7,8,9,10,11,12] }
-      ];
-
-      let html = `
-        <thead class="bg-slate-50 text-slate-700 border-b border-slate-200 sticky top-0 z-10">
-          <tr>
-            <th rowspan="2" class="py-2 px-3 border-r text-left bg-slate-100 sticky left-0 z-20">상담유형(소)</th>
-            <th colspan="12" class="py-1 px-2 border-r bg-blue-50 text-blue-900 border-b font-bold">2025년 제조</th>
-            <th colspan="12" class="py-1 px-2 border-r bg-indigo-50 text-indigo-900 border-b font-bold">2026년 제조</th>
-            <th rowspan="2" class="py-2 px-3 bg-slate-200 font-bold">합계</th>
-          </tr>
-          <tr class="bg-slate-50 text-[10px] text-slate-600">
-            ${yearColumns.map(yc => yc.months.map(m => `<th class="py-1 px-1.5 border-r bg-slate-50">${m}월</th>`).join('')).join('')}
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100">
-      `;
-
+      // 고유 상담유형(소) 추출
       const subTypeCounts = {};
       pivotSource.forEach(d => {
         const mt = d.typeS || '기타';
         subTypeCounts[mt] = (subTypeCounts[mt] || 0) + 1;
       });
-
       const subTypes = Object.keys(subTypeCounts).sort((a,b) => subTypeCounts[b] - subTypeCounts[a]);
 
-      if (subTypes.length === 0) {
-        table.innerHTML = `<tr><td class="py-8 text-center text-slate-400">2025~2026년 제조일자에 해당하는 데이터가 없습니다.</td></tr>`;
+      // 가로형 헤더: 상담유형(소)가 1열 헤더로 쭉 배치되고 세로 행이 1월, 2월 ... 연도별 매트릭스
+      let html = `
+        <thead class="bg-slate-50 text-slate-700 border-b border-slate-200 sticky top-0 z-10">
+          <tr>
+            <th class="py-2.5 px-3 border-r text-center bg-slate-100 font-bold whitespace-nowrap">제조년월</th>
+            ${subTypes.map(st => `<th class="py-2.5 px-2 border-r text-center font-bold text-slate-800 whitespace-nowrap">${st}</th>`).join('')}
+            <th class="py-2.5 px-3 bg-slate-200 font-bold whitespace-nowrap">월별 합계</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+      `;
+
+      // 가로/세로 매트릭스 행 데이터 구성 (세로 행: 2025년 1월 ~ 2026년 12월)
+      const rowsToRender = [];
+      ['2025', '2026'].forEach(year => {
+        for (let m = 1; m <= 12; m++) {
+          const monthStr = String(m);
+          const matchedRecords = pivotSource.filter(d => d.mfgYear === year && parseInt(d.mfgMonth, 10) === m);
+          if (matchedRecords.length > 0) {
+            rowsToRender.push({ year, month: monthStr, records: matchedRecords });
+          }
+        }
+      });
+
+      if (rowsToRender.length === 0) {
+        table.innerHTML = `<tr><td class="py-8 text-center text-slate-400">조건에 부합하는 제조일자 데이터가 존재하지 않습니다.</td></tr>`;
         return;
       }
 
-      subTypes.forEach(stName => {
-        const rows = pivotSource.filter(d => (d.typeS || '기타') === stName);
-        const rowHasNew = rows.some(r => r.isNew);
-        const safeSt = stName.replace(/'/g, "\\'");
-        html += `<tr class="hover:bg-slate-50"><td class="py-1.5 px-3 text-left font-semibold text-slate-900 border-r bg-white sticky left-0 whitespace-nowrap">${stName}</td>`;
+      rowsToRender.forEach(rowInfo => {
+        const rowHasNew = rowInfo.records.some(r => r.isNew);
+        const rowBgClass = rowHasNew ? 'bg-yellow-50/50' : 'hover:bg-slate-50/80';
+        
+        html += `
+          <tr class="${rowBgClass}">
+            <td class="py-2 px-3 border-r bg-slate-50 font-bold text-slate-700 text-center whitespace-nowrap">
+              ${rowInfo.year}년 ${rowInfo.month}월
+            </td>
+        `;
 
-        yearColumns.forEach(yc => {
-          yc.months.forEach(m => {
-            const cellRows = rows.filter(d => d.mfgYear === yc.year && parseInt(d.mfgMonth, 10) === m);
-            const count = cellRows.length;
-            const hasNewInCell = cellRows.some(r => r.isNew);
+        let monthTotal = 0;
+        subTypes.forEach(st => {
+          const cellRecords = rowInfo.records.filter(d => (d.typeS || '기타') === st);
+          const count = cellRecords.length;
+          const cellHasNew = cellRecords.some(r => r.isNew);
+          monthTotal += count;
 
-            if (count > 0) {
-              const cellBgClass = hasNewInCell ? 'bg-yellow-100/90' : '';
-              const badgeStyle = hasNewInCell
-                ? 'bg-yellow-300 text-amber-950 border-2 border-amber-500 ring-2 ring-yellow-200 font-black'
-                : 'text-blue-800 bg-blue-100 border border-blue-200 font-bold';
+          if (count > 0) {
+            const cellBgClass = cellHasNew ? 'bg-yellow-100/90' : '';
+            const badgeStyle = cellHasNew
+              ? 'bg-yellow-300 text-amber-950 border-2 border-amber-500 font-black ring-2 ring-yellow-200'
+              : 'text-blue-800 bg-blue-50 border border-blue-100 font-bold hover:bg-blue-100';
 
-              html += `<td class="py-1.5 px-1 border-r ${cellBgClass}"><span onclick="openModalForSubtype('${safeSt}', '${yc.year}', ${m})" class="cell-clickable inline-block px-1.5 py-0.5 rounded text-[11px] ${badgeStyle}" title="${hasNewInCell ? '신규 등록된 데이터 포함!' : ''}">${count}</span></td>`;
-            } else {
-              html += `<td class="py-1.5 px-1 border-r text-slate-300">-</td>`;
-            }
-          });
+            const safeSt = st.replace(/'/g, "\\'");
+            html += `
+              <td class="py-1.5 px-1 border-r ${cellBgClass} text-center">
+                <span onclick="openModalForSubtype('${safeSt}', '${rowInfo.year}', ${rowInfo.month})" class="cell-clickable inline-block px-2 py-0.5 rounded text-[11px] ${badgeStyle}">
+                  ${count}
+                </span>
+              </td>
+            `;
+          } else {
+            html += `<td class="py-1.5 px-1 border-r text-slate-300 text-center">-</td>`;
+          }
         });
 
-        const totalBadgeStyle = rowHasNew
-          ? 'bg-yellow-300 text-amber-950 border border-amber-500 font-black'
-          : 'bg-slate-300/80 text-slate-900 font-bold';
-
-        html += `<td class="py-1.5 px-2 border-l ${rowHasNew ? 'bg-yellow-50' : 'bg-slate-50'}"><span onclick="openModalForSubtype('${safeSt}', 'ALL_25_26', 0)" class="cell-clickable inline-block px-2 py-0.5 rounded text-xs ${totalBadgeStyle}">${rows.length}</span></td></tr>`;
+        html += `
+            <td class="py-2 px-3 font-bold bg-slate-100 text-slate-800 text-center">
+              ${monthTotal}
+            </td>
+          </tr>
+        `;
       });
 
       table.innerHTML = html + `</tbody>`;
     }
 
-    // ================= 10. 상세 접수 내역 테이블 & 컬럼 필터 =================
+    // ================= 10. 상세 접수 내역 테이블 데이터 구성 =================
     function populateTableColumnFilters(data) {
       const updateSelectOptions = (selectId, values, suffix = '') => {
         const el = document.getElementById(selectId);
@@ -1316,13 +1297,13 @@
       const startIdx = (currentPage - 1) * PAGE_SIZE;
       const pageItems = currentFilteredTableData.slice(startIdx, startIdx + PAGE_SIZE);
 
-      document.getElementById('tableCountSummary').innerText = `검색 결과 총 ${total.toLocaleString()}건 (페이지당 ${PAGE_SIZE}건 표시)`;
+      document.getElementById('tableCountSummary').innerText = `검색 결과 총 ${total.toLocaleString()}건`;
       document.getElementById('pageInfoText').innerText = `페이지 ${currentPage} / ${totalPages} (총 ${total.toLocaleString()}건)`;
 
       const tbody = document.getElementById('detailTableBody');
       tbody.innerHTML = pageItems.map(d => {
         const hasPhoto = Boolean(imageStore[d.id]);
-        const rowHighlight = d.isNew ? 'bg-yellow-50/80 hover:bg-yellow-100/80' : 'hover:bg-slate-50';
+        const rowHighlight = d.isNew ? 'bg-yellow-50 hover:bg-yellow-100/90' : 'hover:bg-slate-50';
         return `
           <tr class="${rowHighlight}">
             <td class="py-2 px-2.5 text-slate-600 font-mono text-[11px] whitespace-nowrap">
@@ -1330,7 +1311,7 @@
                 <button onclick="copyToClipboard('${d.id}')" class="hover:text-blue-600 hover:underline inline-flex items-center" title="클릭하여 번호 복사">
                   ${d.id || '-'} <i class="fa-regular fa-copy ml-1 text-[10px]"></i>
                 </button>
-                ${d.isNew ? `<span class="bg-amber-500 text-white text-[9px] font-black px-1 py-0.2 rounded">NEW</span>` : ''}
+                ${d.isNew ? `<span class="bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded shadow-sm">NEW</span>` : ''}
               </div>
             </td>
             <td class="py-2 px-2 text-center text-slate-600 whitespace-nowrap">${d.rYear ? d.rYear + '년' : '-'}</td>
@@ -1361,7 +1342,7 @@
       }).join('');
     }
 
-    // ================= 11. 모달 팝업 (신규 데이터 테두리 구분 표시) =================
+    // ================= 11. 모달 팝업 및 상세 내역 =================
     let lastModalState = null;
 
     window.openModalForSubtype = function(subtype, year, month) {
@@ -1369,13 +1350,9 @@
       let base = currentBaseTableData.filter(d => (d.typeS || '기타') === subtype);
       let subtitle = `상담유형(소): ${subtype} | `;
 
-      if (year === 'ALL_25_26') {
-        base = base.filter(d => d.mfgYear === '2025' || d.mfgYear === '2026');
-        subtitle += `2025~2026년 전체 (${base.length}건)`;
-      } else {
-        base = base.filter(d => d.mfgYear === year && parseInt(d.mfgMonth, 10) === month);
-        subtitle += `${year}년 ${month}월 제조분 (${base.length}건)`;
-      }
+      base = base.filter(d => d.mfgYear === year && parseInt(d.mfgMonth, 10) === month);
+      subtitle += `${year}년 ${month}월 제조분 (${base.length}건)`;
+      
       showDetailModal(`[피벗 상세] ${subtype} 접수건 및 사진 관리`, subtitle, base);
     };
 
@@ -1393,6 +1370,7 @@
       else if (lastModalState.mode === 'PIVOT') openModalForSubtype(lastModalState.subtype, lastModalState.year, lastModalState.month);
     }
 
+    // [요구사항 5] 제조년/월을 접수일자와 같이 YYYY-MM-DD 제조일자 형식으로 통일
     function showDetailModal(title, subtitle, items) {
       document.getElementById('modalTitle').innerText = title;
       document.getElementById('modalSubtitle').innerText = subtitle;
@@ -1452,8 +1430,10 @@
                   <div><span class="text-slate-400">생산팀:</span> <span class="font-bold text-slate-800">${d.team}</span></div>
                   <div><span class="text-slate-400">제품명:</span> <span class="font-bold text-slate-800">${d.product}</span></div>
                   <div><span class="text-slate-400">상담유형:</span> <span class="font-semibold text-blue-700">${d.typeL} &gt; ${d.typeS}</span></div>
-                  <div><span class="text-slate-400">제조년/월:</span> <span class="font-medium text-slate-700">${d.mfgYear ? d.mfgYear+'년 '+d.mfgMonth+'월' : '미기재'}</span></div>
-                  <div><span class="text-slate-400">접수년/월:</span> <span class="font-medium text-slate-700">${d.rYear}년 ${d.rMonth}월 (${d.date})</span></div>
+                  <!-- [요구사항 5] 제조년월을 접수일자와 같이 YYYY-MM-DD 제조일자 형식으로 통일 -->
+                  <div><span class="text-slate-400">제조일자:</span> <span class="font-bold text-slate-900">${d.mfgDate ? d.mfgDate : '미기재'}</span></div>
+                  <div><span class="text-slate-400">소비기한:</span> <span class="font-medium text-slate-700">${d.expDate ? d.expDate : '미기재'}</span></div>
+                  <div><span class="text-slate-400">접수일자:</span> <span class="font-medium text-slate-700">${d.date} (${d.rYear}년 ${d.rMonth}월)</span></div>
                 </div>
                 <div class="${d.isNew ? 'bg-amber-50/70 border-amber-300' : 'bg-slate-50 border-slate-200'} p-3 rounded-lg border mt-2">
                   <p class="text-slate-800 text-xs leading-relaxed whitespace-pre-wrap">${d.desc || '상담 내용이 없습니다.'}</p>
@@ -1477,6 +1457,7 @@
       });
     };
 
+    // ================= 12. 실시간 구글 연동 =================
     window.uploadPhotoForItem = function(id, input) {
       if (input.files && input.files[0]) {
         const file = input.files[0];
@@ -1485,14 +1466,12 @@
           const dataUrl = e.target.result;
           const base64Data = dataUrl.split(",")[1];
           
-          // 로컬 화면 표시용 업데이트
           imageStore[id] = { dataUrl: dataUrl, note: '' };
           await saveImagePermanently(id, dataUrl);
           updateStorageStatusUI();
           renderTablePage();
           refreshCurrentModal();
 
-          // 구글 드라이브 & 구글 시트로 백그라운드 전송
           try {
             const targetRecord = currentDataset.find(d => d.id === String(id)) || {};
             const payload = {
@@ -1508,12 +1487,13 @@
               typeS: targetRecord.typeS || "",
               date: targetRecord.date || "",
               expDate: targetRecord.expDate || "",
+              isNew: targetRecord.isNew ? "TRUE" : "FALSE",
               fileName: file.name,
               fileType: file.type,
               fileData: base64Data
             };
 
-            alert("선택하신 사진을 구글 드라이브 및 구글 스프레드시트에 저장하고 있습니다. 잠시만 기다려주세요...");
+            alert("사진을 구글 드라이브 및 구글 스프레드시트에 저장하고 있습니다...");
             
             const response = await fetch(GOOGLE_API_URL, {
               method: "POST",
@@ -1522,15 +1502,14 @@
             });
             const resData = await response.json();
             if (resData.status === "success") {
-              alert("구글 서버에 백업 및 파일 업로드 완료!\n파일 주소: " + resData.fileUrl);
-              // 데이터 최신화
+              alert("구글 서버 업로드 완료!");
               initDashboard();
             } else {
               alert("서버 저장 실패: " + resData.message);
             }
           } catch (uploadErr) {
-            console.error("구글 드라이브 업로드 실패", uploadErr);
-            alert("인터넷 연결 불안정으로 구글 드라이브 업로드에는 실패했으나, 본인 브라우저에는 저장되었습니다.");
+            console.error(uploadErr);
+            alert("인터넷 연결 불안정으로 원격 업로드에는 실패했으나, 로컬 브라우저에는 저장되었습니다.");
           }
         };
         reader.readAsDataURL(file);
@@ -1547,7 +1526,7 @@
       }
     };
 
-    // ================= 12. 엑셀 추가 등록 & 중복 유지 로직 =================
+    // ================= 13. 엑셀 추가 등록 & 중복 유지 로직 =================
     function setupEvents() {
       const fileInput = document.getElementById('fileInput');
       if (fileInput) {
@@ -1597,7 +1576,6 @@
         currentDataset = incomingCleaned.map(d => ({ ...d, isNew: false }));
         await saveDatasetPermanently(currentDataset);
         
-        // 초기 대용량 일괄 등록 진행 (Batch 전송)
         try {
           alert("초기 전체 데이터를 구글 스프레드시트에 등록하는 중입니다. 양이 많아 약 5~10초 소요됩니다...");
           const response = await fetch(GOOGLE_API_URL, {
@@ -1642,7 +1620,6 @@
       currentDataset = [...baseDataset, ...newlyAddedRecords];
       await saveDatasetPermanently(currentDataset);
 
-      // 구글 시트에 새로 추가된 건수 일괄(Batch) 등록 진행
       if (newlyAddedRecords.length > 0) {
         try {
           alert("신규 추가된 " + newlyAddedRecords.length + "건을 구글 스프레드시트에 저장 중입니다...");
@@ -1657,7 +1634,7 @@
           }
         } catch (err) {
           console.error("신규 추가 데이터 동기화 오류", err);
-          alert("서버 연결 일시 불안정으로 구글 시트 저장에는 실패했으나, 본인 브라우저(로컬)에는 합병되었습니다.");
+          alert("구글 시트 동기화에 실패했으나, 본인 브라우저(로컬)에는 합병되었습니다.");
         }
       } else {
         alert("새로 추가할 신규 데이터가 없습니다. (모두 기존 데이터와 중복됨)");
@@ -1666,11 +1643,28 @@
       await initDashboard();
     }
 
+    // [요구사항 6] 신규 알림 일괄 클리어 원격 제어 탑재
     window.clearNewBadges = async function() {
-      currentDataset = currentDataset.map(d => ({ ...d, isNew: false }));
-      await saveDatasetPermanently(currentDataset);
-      await initDashboard();
-      alert('신규(+N) 배지 및 노란색 음영 표시가 확인(초기화)되었습니다.');
+      if (confirm('모든 사용자 화면에서 신규 배지(+N)와 노란색 음영을 초기화하시겠습니까?')) {
+        alert("구글 스프레드시트의 신규 표시를 해제하고 있습니다...");
+        try {
+          const response = await fetch(GOOGLE_API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ action: "clearNew" })
+          });
+          const res = await response.json();
+          if (res.status === "success") {
+            alert("대시보드 신규 음영 초기화 완료!");
+            await initDashboard();
+          } else {
+            alert("초기화 실패: " + res.message);
+          }
+        } catch (e) {
+          console.error(e);
+          alert("네트워크 오류로 초기화에 실패했습니다.");
+        }
+      }
     };
 
     window.exportBackupJson = function() {
@@ -1705,7 +1699,7 @@
             }
           }
           await initDashboard();
-          alert('백업 파일(데이터 및 불량 사진)이 성공적으로 복원되었습니다.');
+          alert('데이터 복원이 완료되었습니다.');
         } catch (err) {
           alert('올바른 백업 파일이 아닙니다.');
         }
