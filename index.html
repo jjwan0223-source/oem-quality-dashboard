@@ -100,7 +100,7 @@
           </div>
           <div>
             <div class="flex items-center space-x-2">
-              <span class="text-xs font-black tracking-wide text-blue-600 uppercase cursor-pointer" onclick="selectTeam('ALL')">OTOKIQISYSTEM.COM</span>
+              <!-- [요구사항 4] OTOKIQISYSTEM.COM 로고 문구 삭제 완료 -->
               <span id="storageStatusBadge" class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded flex items-center">
                 <i class="fa-solid fa-hard-drive mr-1 text-[9px]"></i> <span id="storageRecordCountText">데이터 로딩 중...</span>
               </span>
@@ -113,9 +113,7 @@
             <i class="fa-solid fa-file-arrow-up mr-1.5"></i> 엑셀/CSV 추가 등록
             <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" class="hidden" />
           </label>
-          <button onclick="exportRawData()" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition">
-            <i class="fa-solid fa-file-excel mr-1.5"></i> 통합 Raw 다운로드
-          </button>
+          <!-- [요구사항 2] 통합 Raw 다운로드 버튼 삭제 완료 -->
           <a href="https://otokics.lightning.force.com/lightning/page/home" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition">
             <i class="fa-solid fa-bolt mr-1.5"></i> Salesforce 바로가기
           </a>
@@ -240,6 +238,25 @@
                 </div>
               </div>
             </div>
+
+            <!-- [요구사항 3] 월별 중복 선택 필터 (원하는 동월 비교 가능) -->
+            <div class="flex flex-wrap items-center gap-2 bg-slate-50 px-3 py-2 rounded-lg border border-slate-200">
+              <span class="text-xs font-bold text-slate-700 mr-2"><i class="fa-solid fa-filter text-blue-600 mr-1"></i>대비 월 선택 (중복가능):</span>
+              <div id="monthCheckboxContainer" class="flex flex-wrap items-center gap-2 text-[11px] font-semibold">
+                <label class="inline-flex items-center space-x-1 cursor-pointer"><input type="checkbox" value="1" checked onchange="onMonthFilterChange()" class="month-chk rounded text-blue-600" /><span>1월</span></label>
+                <label class="inline-flex items-center space-x-1 cursor-pointer"><input type="checkbox" value="2" checked onchange="onMonthFilterChange()" class="month-chk rounded text-blue-600" /><span>2월</span></label>
+                <label class="inline-flex items-center space-x-1 cursor-pointer"><input type="checkbox" value="3" checked onchange="onMonthFilterChange()" class="month-chk rounded text-blue-600" /><span>3월</span></label>
+                <label class="inline-flex items-center space-x-1 cursor-pointer"><input type="checkbox" value="4" checked onchange="onMonthFilterChange()" class="month-chk rounded text-blue-600" /><span>4월</span></label>
+                <label class="inline-flex items-center space-x-1 cursor-pointer"><input type="checkbox" value="5" checked onchange="onMonthFilterChange()" class="month-chk rounded text-blue-600" /><span>5월</span></label>
+                <label class="inline-flex items-center space-x-1 cursor-pointer"><input type="checkbox" value="6" checked onchange="onMonthFilterChange()" class="month-chk rounded text-blue-600" /><span>6월</span></label>
+                <label class="inline-flex items-center space-x-1 cursor-pointer"><input type="checkbox" value="7" checked onchange="onMonthFilterChange()" class="month-chk rounded text-blue-600" /><span>7월</span></label>
+                <label class="inline-flex items-center space-x-1 cursor-pointer"><input type="checkbox" value="8" checked onchange="onMonthFilterChange()" class="month-chk rounded text-blue-600" /><span>8월</span></label>
+                <label class="inline-flex items-center space-x-1 cursor-pointer"><input type="checkbox" value="9" checked onchange="onMonthFilterChange()" class="month-chk rounded text-blue-600" /><span>9월</span></label>
+                <label class="inline-flex items-center space-x-1 cursor-pointer"><input type="checkbox" value="10" checked onchange="onMonthFilterChange()" class="month-chk rounded text-blue-600" /><span>10월</span></label>
+                <label class="inline-flex items-center space-x-1 cursor-pointer"><input type="checkbox" value="11" checked onchange="onMonthFilterChange()" class="month-chk rounded text-blue-600" /><span>11월</span></label>
+                <label class="inline-flex items-center space-x-1 cursor-pointer"><input type="checkbox" value="12" checked onchange="onMonthFilterChange()" class="month-chk rounded text-blue-600" /><span>12월</span></label>
+              </div>
+            </div>
           </div>
 
           <!-- 지표 박스 -->
@@ -314,7 +331,7 @@
           </div>
         </div>
 
-        <!-- [요구사항 4] 피벗 테이블 세로/가로 변경 완료 (1월 2월 세로로, 상담유형(소)가 가로로) -->
+        <!-- [요구사항 4] 피벗 테이블 세로/가로 행렬 변경 및 가독성 업그레이드 -->
         <div id="teamDetailSection" class="hidden space-y-6">
           <div id="matrixSection" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
             <div class="p-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
@@ -358,13 +375,15 @@
                   <th class="py-2 px-2 text-center whitespace-nowrap">접수년</th>
                   <th class="py-2 px-2 text-center whitespace-nowrap">접수월</th>
                   <th class="py-2 px-2.5 whitespace-nowrap">생산팀</th>
-                  <th class="py-2 px-2.5 whitespace-nowrap">제품명</th>
+                  <!-- [요구사항 1] 열 너비 조정 및 글자 한줄/두줄 반응형 설계 -->
+                  <th class="py-2 px-2.5 whitespace-nowrap w-[200px]">제품명</th>
                   <th class="py-2 px-2 text-center whitespace-nowrap">클레임여부</th>
                   <th class="py-2 px-2 text-center whitespace-nowrap">제조년</th>
                   <th class="py-2 px-2 text-center whitespace-nowrap">제조월</th>
                   <th class="py-2 px-2.5 text-center whitespace-nowrap">상담유형(대)</th>
                   <th class="py-2 px-2.5 text-center whitespace-nowrap">상담유형(소)</th>
-                  <th class="py-2 px-2.5 whitespace-nowrap">상담내용 요약</th>
+                  <!-- [요구사항 1] 상담내용 요약 칸 가로 대폭 축소 -->
+                  <th class="py-2 px-2.5 whitespace-nowrap w-[150px]">상담내용 요약</th>
                   <th class="py-2 px-2.5 text-center whitespace-nowrap">사진/상세</th>
                 </tr>
                 <tr class="bg-slate-100/90 border-t border-slate-200 text-[11px]">
@@ -749,6 +768,8 @@
     
     let selectedMfgYears = new Set(['2025', '2026']);
     let selectedReceiptYears = new Set(['2025', '2026']);
+    // [요구사항 3] 월별 중복 대비를 위한 세트 생성 (기본 전체 월 활성화)
+    let selectedMonths = new Set(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']);
 
     let currentBaseTableData = [];
     let currentFilteredTableData = [];
@@ -800,11 +821,21 @@
       updateView();
     };
 
+    // [요구사항 3] 월 필터 체인지 함수 정의
+    window.onMonthFilterChange = function() {
+      const monthChks = document.querySelectorAll('.month-chk');
+      selectedMonths.clear();
+      monthChks.forEach(chk => { if(chk.checked) selectedMonths.add(chk.value); });
+      updateView();
+    };
+
     window.resetFilters = function() {
       document.querySelectorAll('.mfg-year-chk').forEach(chk => chk.checked = true);
       document.querySelectorAll('.receipt-year-chk').forEach(chk => chk.checked = true);
+      document.querySelectorAll('.month-chk').forEach(chk => chk.checked = true);
       selectedMfgYears = new Set(['2025', '2026']);
       selectedReceiptYears = new Set(['2025', '2026']);
+      selectedMonths = new Set(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']);
       currentSelectedTypeL = 'ALL';
       currentSelectedTeam = 'ALL';
       resetTableColumnFilters(false);
@@ -812,11 +843,13 @@
       updateView();
     };
 
+    // [요구사항 3] 선택된 동월(Month) 비교 필터 결합
     function getFilteredData() {
       return currentDataset.filter(d => {
         const matchMfg = !d.mfgYear ? true : selectedMfgYears.has(d.mfgYear);
         const matchReceipt = selectedReceiptYears.has(d.rYear);
-        return matchMfg && matchReceipt;
+        const matchMonth = selectedMonths.has(String(parseInt(d.rMonth, 10)));
+        return matchMfg && matchReceipt && matchMonth;
       });
     }
 
@@ -1317,7 +1350,8 @@
             <td class="py-2 px-2 text-center text-slate-600 whitespace-nowrap">${d.rYear ? d.rYear + '년' : '-'}</td>
             <td class="py-2 px-2 text-center text-slate-600 whitespace-nowrap">${d.rMonth ? d.rMonth + '월' : '-'}</td>
             <td class="py-2 px-2.5 font-semibold text-slate-900 whitespace-nowrap">${d.team}</td>
-            <td class="py-2 px-2.5 text-slate-800">${d.product}</td>
+            <!-- [요구사항 1] 제품명 가독성을 극대화하기 위해 한 줄로 고정하고, 영역 밖은 생략(말줄임) 처리 -->
+            <td class="py-2 px-2.5 text-slate-800 max-w-[200px] truncate" title="${(d.product || '').replace(/"/g, '&quot;')}">${d.product}</td>
             <td class="py-2 px-2 text-center whitespace-nowrap">
               <span class="px-2 py-0.5 rounded text-[11px] font-bold ${d.claim ? 'bg-rose-100 text-rose-700 border border-rose-200' : 'bg-slate-100 text-slate-500'}">
                 ${d.claim ? 'TRUE' : 'FALSE'}
@@ -1331,7 +1365,8 @@
             <td class="py-2 px-2.5 text-center whitespace-nowrap">
               <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-50 text-blue-700">${d.typeS}</span>
             </td>
-            <td class="py-2 px-2.5 text-slate-600 max-w-xs truncate" title="${(d.desc || '').replace(/"/g, '&quot;')}">${d.desc}</td>
+            <!-- [요구사항 1] 상담내용 요약 칸 가로 너비 축소 & 반응형 말줄임 연동 -->
+            <td class="py-2 px-2.5 text-slate-600 max-w-[150px] truncate hover:whitespace-normal hover:overflow-visible hover:max-w-none transition-all duration-200" title="${(d.desc || '').replace(/"/g, '&quot;')}">${d.desc}</td>
             <td class="py-2 px-2.5 text-center whitespace-nowrap">
               <button onclick="openSingleDetailModal('${d.id}')" class="px-2.5 py-1 rounded ${hasPhoto ? 'bg-emerald-600 text-white' : 'bg-blue-50 text-blue-700 border border-blue-200'} hover:opacity-90 text-[11px] font-bold">
                 <i class="fa-solid ${hasPhoto ? 'fa-camera' : 'fa-image'} mr-1"></i> ${hasPhoto ? '사진보유' : '사진/상세'}
